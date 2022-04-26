@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
     res.send({ mesaje: 'Hola Mundo'});
 });
 
-app.get('/products', async (req, res) => {
+app.get('/productos', async (req, res) => {
 
     try{
   
@@ -30,7 +30,7 @@ app.get('/products', async (req, res) => {
     }
 });
 
-app.get('/randomProducts', async (req, res) => {
+app.get('/productoRandom', async (req, res) => {
 
     try{
   
