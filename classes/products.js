@@ -7,7 +7,7 @@
 const fs = require('fs');
 
 //Clase Contenedor.
-class CONTAINER {
+class Container {
 
     //Constructor clase Contenedor.
     constructor(fileName) {
@@ -29,19 +29,27 @@ class CONTAINER {
                 products.push(product);
 
             } else {
-                //En caso de que productos sea distinto de null,
-                //asigno el ultimo a id de la lista a una variable y le sumo 1(uno).
-                let lastId = products[products.length - 1].id;
-                //En nuevo id se lo asigno al nuevo objeto de la lista.
-                product.id = ++lastId;
-                products.push(product);
+                //Pregunto si el objeto tiene id, si el id esta definido, es una modificación.
+                if(product.id === undefined){
+                    //En caso de que productos sea distinto de null,
+                    //asigno el ultimo a id de la lista a una variable y le sumo 1(uno).
+                    let lastId = products[products.length - 1].id;
+                    //En nuevo id se lo asigno al nuevo objeto de la lista.
+                    product.id = ++lastId;
+                    products.push(product);
+                }else{
+                    //Busco el producto.
+                    const editProduct = products.find(prod => prod.id === product.id);
+                    //Modifico el producto.
+                    editProduct.title = product.title;
+                    editProduct.price = product.price;
+                    editProduct.thumbnail = product.thumbnail;
+                }
             }
             //En caso de que no exista el txt lo creo sino lo sobrescribo con el listado que contiene el nuevo elemento.
             await fs.promises.writeFile(`./${this.fileName}`, JSON.stringify(products));
 
-            //Devuelvo el id del ultimo elemento ingresado al txt.
-            return product.id;
-
+            return product;
         }
         catch (err) {
             console.log('Error al guardar: ', err);
@@ -138,7 +146,7 @@ class CONTAINER {
 }
 
 //Clase Productos.
-class PRODUCTS {
+class Products {
 
     //Constructor clase Productos.
     constructor(id, title, price, thumbnail) {
@@ -152,6 +160,6 @@ class PRODUCTS {
 
 module.exports =
 {
-    PRODUCTS,
-    CONTAINER
+    Products,
+    Container
 }
