@@ -3,10 +3,11 @@ const { Container, Products } = require("../classes/products.js");
 const { Router } = require("express");
 const router = Router();
 
+const obj =  new Container();
+
 router.get('/productos', async (req, res) => {
 
     try{  
-        const obj =  new Container('products.txt');
         const products  = await obj.getAll();
 
         res.status(200).send({"products": products});
@@ -20,8 +21,6 @@ router.get('/productos/:id', async (req, res) => {
 
     try{
         const id = parseInt(req.params.id);
-  
-        const obj =  new Container('products.txt');
         const products  = await obj.getById(id);
 
         if(products != null){
@@ -37,19 +36,16 @@ router.get('/productos/:id', async (req, res) => {
 
 router.post('/productos', async (req, res)=> { 
     
-    try {
-      
+    try {      
         const title = req.body.title;
         const price = req.body.price;
         const thumbnail = req.body.thumbnail;
 
         const newProduct = new Products();
-
         newProduct.title = title;
         newProduct.price = price;
         newProduct.thumbnail = thumbnail;
 
-        const obj =  new Container('products.txt');
         const product  = await obj.save(newProduct);
 
         res.status(200).send({"products": product});
@@ -62,20 +58,17 @@ router.post('/productos', async (req, res)=> {
 router.put('/productos/:id', async (req, res)=> { 
     
     try {
-
         const id = parseInt(req.params.id);
         const title = req.body.title;
         const price = req.body.price;
         const thumbnail = req.body.thumbnail;
 
         const editProduct = new Products();
-
         editProduct.id = id;
         editProduct.title = title;
         editProduct.price = price;
         editProduct.thumbnail = thumbnail;
 
-        const obj =  new Container('products.txt');
         const product  = await obj.save(editProduct);
 
         res.status(200).send({"products": product});    
@@ -88,10 +81,7 @@ router.put('/productos/:id', async (req, res)=> {
 router.delete('/productos/:id', async (req, res)=> { 
     
     try {
-
         const id = parseInt(req.params.id);
-
-        const obj =  new Container('products.txt');
         const product  = await obj.getById(id);
 
         if(product != null){
