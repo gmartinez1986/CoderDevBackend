@@ -1,42 +1,41 @@
-const { Container, Products } = require("../classes/products.js");
+const { Container, Products, obj } = require("../classes/products.js");
 
 const { Router } = require("express");
 const router = Router();
 
-const obj =  new Container();
 
-router.get('/productos', async (req, res) => {
+router.get('/productos', (req, res) => {
 
-    try{  
-        const products  = await obj.getAll();
+    try {
+        const products = obj.getAll();
 
-        res.status(200).send({"products": products});
+        res.status(200).send({ "products": products });
     }
-    catch(e){
-        res.status(413).send({"Error": e.message});
+    catch (e) {
+        res.status(413).send({ "Error": e.message });
     }
 });
 
-router.get('/productos/:id', async (req, res) => {
+router.get('/productos/:id', (req, res) => {
 
-    try{
+    try {
         const id = parseInt(req.params.id);
-        const products  = await obj.getById(id);
+        const products = obj.getById(id);
 
-        if(products != null){
-            res.status(200).send({"products": products});
-        }else{
-            res.status(200).send({"Error": "Producto no encontrado"}); 
+        if (products != null) {
+            res.status(200).send({ "products": products });
+        } else {
+            res.status(200).send({ "Error": "Producto no encontrado" });
         }
     }
-    catch(e){
-        res.status(413).send({"Error": e.message});
+    catch (e) {
+        res.status(413).send({ "Error": e.message });
     }
 });
 
-router.post('/productos', async (req, res)=> { 
-    
-    try {      
+router.post('/productos', (req, res) => {
+
+    try {
         const title = req.body.title;
         const price = req.body.price;
         const thumbnail = req.body.thumbnail;
@@ -46,17 +45,17 @@ router.post('/productos', async (req, res)=> {
         newProduct.price = price;
         newProduct.thumbnail = thumbnail;
 
-        const product  = await obj.save(newProduct);
+        obj.save(newProduct);
 
-        res.status(200).send({"products": product});
+        res.status(200).redirect('/productos');
     }
-    catch(e){
-        res.status(413).send({'Error': e.message});
+    catch (e) {
+        res.status(413).send({ 'Error': e.message });
     }
 });
 
-router.put('/productos/:id', async (req, res)=> { 
-    
+router.put('/productos/:id', (req, res) => {
+
     try {
         const id = parseInt(req.params.id);
         const title = req.body.title;
@@ -69,30 +68,30 @@ router.put('/productos/:id', async (req, res)=> {
         editProduct.price = price;
         editProduct.thumbnail = thumbnail;
 
-        const product  = await obj.save(editProduct);
+        const product = obj.save(editProduct);
 
-        res.status(200).send({"products": product});    
+        res.status(200).send({ "products": product });
     }
-    catch(e){
-        res.status(413).send({'Error': e.message});
+    catch (e) {
+        res.status(413).send({ 'Error': e.message });
     }
 });
 
-router.delete('/productos/:id', async (req, res)=> { 
-    
+router.delete('/productos/:id', (req, res) => {
+
     try {
         const id = parseInt(req.params.id);
-        const product  = await obj.getById(id);
+        const product = obj.getById(id);
 
-        if(product != null){
-            await obj.deleteById(id);
-            res.status(200).send({"mensaje": "El producto se elimino correctamente."});    
-        }else{
-            res.status(200).send({"Error": "Producto no encontrado"}); 
+        if (product != null) {
+            obj.deleteById(id);
+            res.status(200).send({ "mensaje": "El producto se elimino correctamente." });
+        } else {
+            res.status(200).send({ "Error": "Producto no encontrado" });
         }
     }
-    catch(e){
-        res.status(413).send({'Error': e.message});
+    catch (e) {
+        res.status(413).send({ 'Error': e.message });
     }
 });
 

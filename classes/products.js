@@ -6,7 +6,7 @@ class Container {
         this.products = [];
     }
 
-    async save(product) {
+    save(product) {
 
         try {
             if (this.products.length === 0) {
@@ -31,7 +31,7 @@ class Container {
         }
     }
 
-    async getById(id) {
+    getById(id) {
         try {
             if (this.products.length !== 0) {
                 const product = this.products.find(x => x.id === id);
@@ -49,7 +49,7 @@ class Container {
         }
     }
 
-    async getAll() {
+    getAll() {
         try {
            if(this.products.length > 0){      
                 return this.products;
@@ -62,7 +62,7 @@ class Container {
         }
     }
 
-    async deleteById(id) {
+    deleteById(id) {
         try {
             if(this.products.length === 0){
                 return;
@@ -76,7 +76,7 @@ class Container {
         }
     }
 
-    async deleteAll() {
+    deleteAll() {
         try {
             this.products = [];
         }
@@ -97,8 +97,11 @@ class Products {
     }
 }
 
+const obj = new Container();
+
 module.exports =
 {
     Products,
-    Container
+    Container,
+    obj
 }
