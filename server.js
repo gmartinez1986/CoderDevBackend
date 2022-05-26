@@ -1,34 +1,44 @@
 
-const { obj } = require("./classes/products.js");
+const { obj, Products } = require("./classes/products.js");
+
+const path = require('path');
 
 const express = require('express');
+const {Server : ioServer} =require('socket.io');
+const http = require('http');
 const app = express();
 
-const routerProducts = require("./routers/routerProducts.js");
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/api', routerProducts);
+const httpServer = http.createServer(app);
+const io = new ioServer(httpServer);
+
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
-    res.render('pages/index',
-        { title: "Ingrese Producto" }
-    );
-});
-
-app.get('/productos', function (req, res) {
 
     const products = obj.getAll();
 
-    res.render('pages/products',
-        { title: "Lista de Productos",
-          products: products}
+    res.render('pages/index',
+        { title: "Ingrese Producto",
+          products: products,
+          Products: Products }
     );
 });
 
-const PORT = 8080;
+// NUEVO SERVIDOR
+io.on('connection',(socket)=>{
+    console.log('nuevo cliente conectado',socket.id);
+    const products = obj.getAll();
+    socket.emit('products' , products);
 
-const server = app.listen(PORT, () => {
-    console.log(`Servidor http escuchando en el puerto ${server.address().port}`);
-});
-server.on("error", error => console.log(`Error en servidor ${error}`))
+    socket.on("newProduct", product =>{
+        obj.save(product); 
+        const products = obj.getAll();
+        io.sockets.emit('products', products)
+    })
+})
+
+const PORT = 8080
+httpServer.listen(PORT,()=>{
+    console.log(`Server on port ${PORT}`)
+})

@@ -46,8 +46,8 @@ router.post('/productos', (req, res) => {
         newProduct.thumbnail = thumbnail;
 
         obj.save(newProduct);
-
-        res.status(200).redirect('/productos');
+        
+        res.status(200).send({ "products": newProduct });
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });

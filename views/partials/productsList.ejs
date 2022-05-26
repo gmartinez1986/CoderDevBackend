@@ -1,25 +1,40 @@
 <h1 style="color: red">Productos</h1>
-<% if(products != null && products.length > 0) {%>
-    <table class="table">
+<table class="table">
+    <thead>
         <tr style="color: black">
             <th>Nombre</th>
             <th>Precio</th>
             <th>Foto URL</th>
         </tr>
-        <% products.forEach(product=>{ %>
-            <tr>
-                <td>
-                    <%= product.title %>
-                </td>
-                <td>
-                    <%= product.price %>
-                </td>
-                <td>
-                    <%= product.thumbnail %>
-                </td>
-            </tr>
-            <% }) %>
-    </table>
-    <% } else { %>
-        <h2 style="color: blueviolet">No se encontraron datos</h2>
-    <% } %>
+    </thead>
+    <tbody id="tbody">
+
+    </tbody>
+
+</table>
+
+<script>
+    const tbody = document.querySelector("#tbody")
+
+    socket.on('products', (products) => {
+        if (products === null) {
+            return;
+        }
+        tbody.innerHTML = products.map(product => {
+            return (
+                `<tr>
+                    <td>
+                        ${product.title}
+                    </td>
+                    <td>
+                        ${product.price}
+                    </td>
+                    <td>
+                        ${product.thumbnail}
+                    </td>
+                </tr>`
+            )
+        }).join(" ")
+    })
+
+</script>
