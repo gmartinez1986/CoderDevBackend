@@ -1,10 +1,10 @@
 
-const { obj, Products } = require("./classes/products.js");
+const { obj } = require("./classes/products.js");
 
 const path = require('path');
 
 const express = require('express');
-const {Server : ioServer} =require('socket.io');
+const { Server: ioServer } = require('socket.io');
 const http = require('http');
 const app = express();
 
@@ -19,26 +19,36 @@ app.get('/', function (req, res) {
     const products = obj.getAll();
 
     res.render('pages/index',
-        { title: "Ingrese Producto",
-          products: products,
-          Products: Products }
+        {
+            title: "Ingrese Producto",
+            products: products
+        }
     );
 });
 
-// NUEVO SERVIDOR
-io.on('connection',(socket)=>{
-    console.log('nuevo cliente conectado',socket.id);
-    const products = obj.getAll();
-    socket.emit('products' , products);
+const messages = [];
 
-    socket.on("newProduct", product =>{
-        obj.save(product); 
+// NUEVO SERVIDOR
+io.on('connection', (socket) => {
+    console.log('nuevo cliente conectado', socket.id);
+    const products = obj.getAll();
+    socket.emit('products', products);
+
+    socket.on("newProduct", product => {
+        obj.save(product);
         const products = obj.getAll();
         io.sockets.emit('products', products)
-    })
+    });
+
+    socket.emit('messages', messages);
+
+    socket.on("newMessage", message => {
+        messages.push(message)
+        io.sockets.emit('messages', messages)
+    });
 })
 
 const PORT = 8080
-httpServer.listen(PORT,()=>{
+httpServer.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
 })
