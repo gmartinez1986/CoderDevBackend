@@ -8,7 +8,6 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/productos', productsRoutes);
-
 app.use('/api/carrito', cartsRoutes);
 
 const PORT = 8080;

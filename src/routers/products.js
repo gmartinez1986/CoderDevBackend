@@ -28,6 +28,10 @@ router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const product = await api.getById(id);
+        if (product === undefined) {
+            res.status(200).send({ "Error": "Producto no encontrado" });
+            return;
+        }
         res.status(200).send({ "product": product });
     }
     catch (e) {
@@ -71,6 +75,12 @@ router.put('/:id', adminOrClient, async (req, res) => {
         const price = req.body.price;
         const stock = req.body.stock;
 
+        let product = await api.getById(parseInt(id));
+        if (product === undefined) {
+            res.status(200).send({ "Error": "Producto no encontrado" });
+            return;
+        }
+
         const editProduct = new Products();
         editProduct.id = parseInt(id);
         editProduct.timestamp = Date.now();
@@ -81,7 +91,7 @@ router.put('/:id', adminOrClient, async (req, res) => {
         editProduct.price = price;
         editProduct.stock = stock;
 
-        const product = await api.save(editProduct);
+        product = await api.save(editProduct);
         res.status(200).send({ "products": product });
     }
     catch (e) {
