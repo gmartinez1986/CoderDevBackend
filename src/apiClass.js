@@ -33,9 +33,10 @@ export default class Api {
                 let id
                 objs.length === 0
                     ? id = 1
-                    : id = objs[objs.length - 1].id + 1
+                    : id = objs[objs.length - 1].id + 1;
 
-                objs.push({ ...obj, id })
+                objs.push({ ...obj, id });
+                obj.id = id;
             } else {
                 const index = objs.findIndex(x => x.id === obj.id);
                 objs[index] = obj;

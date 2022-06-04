@@ -43,9 +43,8 @@ router.post('/', async (req, res) => {
         newProduct.price = price;
         newProduct.stock = stock;
 
-        const id = await api.save(newProduct);
-        newProduct.id = id;
-        res.status(200).json(newProduct)
+        const product = await api.save(newProduct);
+        res.status(200).json(product)
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });
