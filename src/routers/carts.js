@@ -78,7 +78,7 @@ router.post('/:id/productos', async (req, res) => {
     }
 });
 
-router.delete('/:id/productos', async (req, res) => {
+router.delete('/:id/productos/:idProduct', async (req, res) => {
     try {
         const { id } = req.params;
         const cart = await apiCart.getById(parseInt(id));
@@ -88,7 +88,7 @@ router.delete('/:id/productos', async (req, res) => {
             return;
         }
       
-        const idProduct = req.body.idProduct;
+        const { idProduct } = req.params;
 
         cart.products = cart.products.filter(function (x) {
             return x.id !== parseInt(idProduct);
