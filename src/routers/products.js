@@ -4,6 +4,16 @@ import Products from '../classes/products'
 const router = Router();
 const api = new Api("/dataBase/products.json");
 
+const isAdmin = false;
+
+function adminOrClient(req,res,next){
+    if(!isAdmin){
+        res.send("No tienes acceso a esta ruta")
+    } else {
+        next()
+    }
+}
+
 router.get('/', async (req, res) => {
     try {
         const products = await api.getAll();
@@ -25,7 +35,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', adminOrClient, async (req, res) => {
     try {
         const name = req.body.name;
         const description = req.body.description;
@@ -51,7 +61,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', adminOrClient, async (req, res) => {
     try {
         const { id } = req.params;
         const name = req.body.name;
@@ -79,7 +89,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', adminOrClient, async (req, res) => {
     try {
         const { id } = req.params;
         const product = await api.getById(parseInt(id));

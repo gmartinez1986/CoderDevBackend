@@ -9,6 +9,10 @@ export default class Api {
     async getAll() {
         try {
             const objs = await fs.promises.readFile(this.BDPath, "utf-8");
+            if(objs === '')
+            {
+                return [];
+            }
             return JSON.parse(objs);
         }
         catch (error) {
