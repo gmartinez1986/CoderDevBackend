@@ -38,8 +38,8 @@ router.delete('/:id', async (req, res) => {
 router.get('/:id/productos', async (req, res) => {
     try {
         const { id } = req.params;
-        const products = await api.getById(id);
-        res.status(200).send({ "products": products });
+        const cart = await apiCart.getById(parseInt(id));
+        res.status(200).send({ "products": cart.products });
     }
     catch (e) {
         res.status(413).send({ "Error": e.message });
@@ -70,10 +70,32 @@ router.post('/:id/productos', async (req, res) => {
         }
 
         cart.products.push(product);
+        await apiCart.save(cart);
+        res.status(200).json(cart);
+    }
+    catch (e) {
+        res.status(413).send({ 'Error': e.message });
+    }
+});
+
+router.delete('/:id/productos', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cart = await apiCart.getById(parseInt(id));
+
+        if (cart === undefined) {          
+            res.status(200).send({ "Error": "Carrito no encontrado" });
+            return;
+        }
+      
+        const idProduct = req.body.idProduct;
+
+        cart.products = cart.products.filter(function (x) {
+            return x.id !== parseInt(idProduct);
+        });
 
         await apiCart.save(cart);
-
-        res.status(200).json(cart)
+        res.status(200).json(cart);  
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });

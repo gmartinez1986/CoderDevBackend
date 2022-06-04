@@ -67,14 +67,4 @@ export default class Api {
             throw new Error(`Error: ${error}`);
         }
     }
-
-    async deleteAll() {
-        try {
-            const objs = await this.getAll();
-            objs = [];
-            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
-        } catch (error) {
-            throw new Error(`Error: ${error}`);
-        }
-    }
 }
