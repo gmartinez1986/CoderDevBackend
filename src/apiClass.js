@@ -11,14 +11,14 @@ export default class Api {
             const objs = await fs.promises.readFile(this.BDPath, "utf-8");
             return JSON.parse(objs);
         }
-        catch (err) {
+        catch (error) {
             throw new Error(`Error: ${error}`);
         }
     }
 
     async getById(id) {
         try {
-            const objs = await this.findAll()
+            const objs = await this.getAll()
             const res = objs.find(e => e.id == id)
             return res
         } catch (error) {
@@ -28,16 +28,21 @@ export default class Api {
 
     async save(obj) {
         try {
-            const objs = await this.findAll()
-            let id
-            objs.length === 0
-                ? id = 1
-                : id = objs[objs.length - 1].id + 1
+            const objs = await this.getAll()
+            if (obj.id === undefined) {
+                let id
+                objs.length === 0
+                    ? id = 1
+                    : id = objs[objs.length - 1].id + 1
 
-            objs.push({ ...obj, id })
+                objs.push({ ...obj, id })
+            } else {
+                const index = objs.findIndex(x => x.id === obj.id);
+                objs[index] = obj;
+            }
 
-            await fs.promises.writeFile(this.rutaBD, JSON.stringify(objs))
-            return id
+            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
+            return obj
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }
@@ -45,14 +50,14 @@ export default class Api {
 
     async deleteById(id) {
         try {
-            const objs = await this.findAll()
+            let objs = await this.getAll();
             if (objs.length === 0) {
                 return;
             }
             objs = objs.filter(function (x) {
                 return x.id !== id;
             });
-            await fs.promises.writeFile(this.rutaBD, JSON.stringify(objs))
+            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }
@@ -60,9 +65,9 @@ export default class Api {
 
     async deleteAll() {
         try {
-            const objs = await this.findAll()
+            const objs = await this.getAll();
             objs = [];
-            await fs.promises.writeFile(this.rutaBD, JSON.stringify(objs))
+            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }

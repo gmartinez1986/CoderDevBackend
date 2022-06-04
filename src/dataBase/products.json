@@ -1,4 +1,1 @@
-[
-    { "id": 1, "timestamp": "prueba", "name": "prueba", "description": "prueba", "code": 1, "photo": "prueba", "price": 1, "stock": 1 }
-]
-  
+[{"id":1,"timestamp":1654320632415,"name":"aaaaaa","description":"prueba 1","code":222,"photo":"prueba 1","price":1,"stock":1},{"id":2,"timestamp":1654320643379,"name":"aaaaaa","description":"prueba 1","code":222,"photo":"prueba 1","price":1,"stock":1}]

@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const product = await api.getById(id);
         res.status(200).send({ "product": product });
     }
@@ -27,7 +27,6 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const timestamp = req.body.timestamp;
         const name = req.body.name;
         const description = req.body.description;
         const code = req.body.code;
@@ -36,7 +35,7 @@ router.post('/', async (req, res) => {
         const stock = req.body.stock;
 
         const newProduct = new Products();
-        newProduct.timestamp = timestamp;
+        newProduct.timestamp = Date.now();
         newProduct.name = name;
         newProduct.description = description;
         newProduct.code = code;
@@ -44,7 +43,8 @@ router.post('/', async (req, res) => {
         newProduct.price = price;
         newProduct.stock = stock;
 
-        obj.save(newProduct);
+        const id = await api.save(newProduct);
+        newProduct.id = id;
         res.status(200).json(newProduct)
     }
     catch (e) {
@@ -52,22 +52,27 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/productos/:id', (req, res) => {
-
+router.put('/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const title = req.body.title;
+        const { id } = req.params;
+        const name = req.body.name;
+        const description = req.body.description;
+        const code = req.body.code;
+        const photo = req.body.photo;
         const price = req.body.price;
-        const thumbnail = req.body.thumbnail;
+        const stock = req.body.stock;
 
         const editProduct = new Products();
-        editProduct.id = id;
-        editProduct.title = title;
+        editProduct.id = parseInt(id);
+        editProduct.timestamp = Date.now();
+        editProduct.name = name;
+        editProduct.description = description;
+        editProduct.code = code;
+        editProduct.photo = photo;
         editProduct.price = price;
-        editProduct.thumbnail = thumbnail;
+        editProduct.stock = stock;
 
-        const product = obj.save(editProduct);
-
+        const product = await api.save(editProduct);
         res.status(200).send({ "products": product });
     }
     catch (e) {
@@ -75,14 +80,13 @@ router.put('/productos/:id', (req, res) => {
     }
 });
 
-router.delete('/productos/:id', (req, res) => {
-
+router.delete('/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const product = obj.getById(id);
+        const { id } = req.params;
+        const product = await api.getById(parseInt(id));
 
         if (product != null) {
-            obj.deleteById(id);
+            await api.deleteById(parseInt(id));
             res.status(200).send({ "mensaje": "El producto se elimino correctamente." });
         } else {
             res.status(200).send({ "Error": "Producto no encontrado" });
