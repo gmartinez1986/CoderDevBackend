@@ -39,6 +39,10 @@ router.get('/:id/productos', async (req, res) => {
     try {
         const { id } = req.params;
         const cart = await apiCart.getById(parseInt(id));
+        if(cart == undefined){
+            res.status(200).send({ "Error": "Carrito no encontrado" });
+            return;
+        }
         res.status(200).send({ "products": cart.products });
     }
     catch (e) {
