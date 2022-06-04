@@ -1,53 +1,51 @@
-const { Container, Products, obj } = require("../classes/products.js");
-
-const { Router } = require("express");
+import { Router } from 'express';
+import Api from '../apiClass';
+import Products from '../classes/products'
 const router = Router();
+const api = new Api("/dataBase/products.json");
 
-
-router.get('/productos', (req, res) => {
-
+router.get('/', async (req, res) => {
     try {
-        const products = obj.getAll();
-
-        res.status(200).send({ "products": products });
+        const products = await api.getAll();
+        res.status(200).json({ "products": products });
     }
     catch (e) {
         res.status(413).send({ "Error": e.message });
     }
 });
 
-router.get('/productos/:id', (req, res) => {
-
+router.get('/:id', async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const products = obj.getById(id);
-
-        if (products != null) {
-            res.status(200).send({ "products": products });
-        } else {
-            res.status(200).send({ "Error": "Producto no encontrado" });
-        }
+        const {id} = req.params;
+        const product = await api.getById(id);
+        res.status(200).send({ "product": product });
     }
     catch (e) {
         res.status(413).send({ "Error": e.message });
     }
 });
 
-router.post('/productos', (req, res) => {
-
+router.post('/', async (req, res) => {
     try {
-        const title = req.body.title;
+        const timestamp = req.body.timestamp;
+        const name = req.body.name;
+        const description = req.body.description;
+        const code = req.body.code;
+        const photo = req.body.photo;
         const price = req.body.price;
-        const thumbnail = req.body.thumbnail;
+        const stock = req.body.stock;
 
         const newProduct = new Products();
-        newProduct.title = title;
+        newProduct.timestamp = timestamp;
+        newProduct.name = name;
+        newProduct.description = description;
+        newProduct.code = code;
+        newProduct.photo = photo;
         newProduct.price = price;
-        newProduct.thumbnail = thumbnail;
+        newProduct.stock = stock;
 
         obj.save(newProduct);
-        
-        res.status(200).send({ "products": newProduct });
+        res.status(200).json(newProduct)
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });
@@ -95,4 +93,4 @@ router.delete('/productos/:id', (req, res) => {
     }
 });
 
-module.exports = router
+export default router;
