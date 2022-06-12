@@ -1,0 +1,48 @@
+<h2>Centro de Mensajes</h2>
+<br />
+<label>email:</label>
+<input type="email" id="email" />
+<label>Mensaje:</label>
+<input type="text" id="texto" />
+<button id="button">Enviar</button>
+<br />
+<br />
+<div id="messages"></div>
+<script>
+
+    class Messages {
+        constructor(email, text, date) {
+            this.email = email;
+            this.text = text;
+            this.date = date;
+        }
+    }
+
+    const button = document.querySelector("#button");
+    const divMessages = document.querySelector("#messages");
+
+    button.addEventListener("click", (event) => {
+        const inputEmail = document.querySelector("#email").value;
+        const inputTexto = document.querySelector("#texto").value;
+        const date = new Date();
+        const message = {
+            email: inputEmail,
+            text: inputTexto,
+            date: date.toLocaleDateString() + " - " + date.toLocaleTimeString()
+        }
+        socket.emit("newMessage", message);
+    })
+
+    socket.on('messages', (messages) => {
+        divMessages.innerHTML = messages.map(message => {
+            return (
+                `<div>
+                    <strong>${message.email} - ${message.date}</strong>:
+                    <em>${message.text}</em>
+                </div>`
+            )
+        }).join(" ")
+
+    })
+
+</script>
