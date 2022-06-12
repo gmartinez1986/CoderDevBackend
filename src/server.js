@@ -16,9 +16,9 @@ app.set('view engine', 'ejs');
 //Creao las tablas.
 (async () => {
     try {
-        let exist = await knex(options.sqlite).schema.hasTable('products');
+        let exist = await knex(options.mariaDB).schema.hasTable('products');
         if (!exist) {
-            await knex(options.sqlite).schema.createTable('products', table => {
+            await knex(options.mariaDB).schema.createTable('products', table => {
                 table.increments('id').primary().unique();
                 table.string('title').notNullable();
                 table.decimal('price').notNullable();
@@ -40,7 +40,7 @@ app.set('view engine', 'ejs');
     }
 })()
 
-const apiProducts = new Api(options.sqlite, "products");
+const apiProducts = new Api(options.mariaDB, "products");
 const apiMessages = new Api(options.sqlite, "messages");
 
 app.get('/', function (req, res) {
