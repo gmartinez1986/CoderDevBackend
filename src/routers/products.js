@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import { options } from '../dataBase/configDB';
 import Api from '../apiClass';
-import Products from '../classes/products'
+import Products from '../classes/products';
 const router = Router();
-const api = new Api("/dataBase/products.json");
 
-const isAdmin = false;
+const api = new Api(options.sqlite, "products");
+
+const isAdmin = true;
 
 function adminOrClient(req,res,next){
     if(!isAdmin){
@@ -41,21 +43,14 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', adminOrClient, async (req, res) => {
     try {
-        const name = req.body.name;
-        const description = req.body.description;
-        const code = req.body.code;
-        const photo = req.body.photo;
+        const title = req.body.title;
         const price = req.body.price;
-        const stock = req.body.stock;
+        const thumbnail = req.body.thumbnail;
 
         const newProduct = new Products();
-        newProduct.timestamp = Date.now();
-        newProduct.name = name;
-        newProduct.description = description;
-        newProduct.code = code;
-        newProduct.photo = photo;
+        newProduct.title = title;
         newProduct.price = price;
-        newProduct.stock = stock;
+        newProduct.thumbnail = thumbnail;
 
         const product = await api.save(newProduct);
         res.status(200).json(product)

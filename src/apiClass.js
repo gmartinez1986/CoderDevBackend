@@ -1,19 +1,16 @@
-import fs from "fs";
+import knex from "knex";
 
 export default class Api {
 
-    constructor(BDPath) {
-        this.BDPath = __dirname + BDPath;
+    constructor(options, table) {
+        this.knex = knex(options);
+        this.table = table;
     }
 
     async getAll() {
         try {
-            const objs = await fs.promises.readFile(this.BDPath, "utf-8");
-            if(objs === '')
-            {
-                return [];
-            }
-            return JSON.parse(objs);
+            const res = await this.knex.from(this.table).select("*");
+            return res;
         }
         catch (error) {
             throw new Error(`Error: ${error}`);
@@ -22,8 +19,7 @@ export default class Api {
 
     async getById(id) {
         try {
-            const objs = await this.getAll()
-            const res = objs.find(e => e.id == id)
+            const res = await this.knex.from(this.table).select("*").where("id", id);
             return res
         } catch (error) {
             throw new Error(`Error: ${error}`);
@@ -32,7 +28,7 @@ export default class Api {
 
     async save(obj) {
         try {
-            const objs = await this.getAll()
+         /*   const objs = await this.getAll()
             if (obj.id === undefined) {
                 let id
                 objs.length === 0
@@ -47,7 +43,9 @@ export default class Api {
             }
 
             await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
-            return obj
+            return obj*/
+            const res = await this.knex.from(this.table).insert(obj);
+            return res;
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }
@@ -55,14 +53,24 @@ export default class Api {
 
     async deleteById(id) {
         try {
-            let objs = await this.getAll();
+            /*let objs = await this.getAll();
             if (objs.length === 0) {
                 return;
             }
             objs = objs.filter(function (x) {
                 return x.id !== id;
             });
-            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))
+            await fs.promises.writeFile(this.BDPath, JSON.stringify(objs))*/
+           const res = await this.knex.from(this.table).where("id", id).del();
+           return res;
+        } catch (error) {
+            throw new Error(`Error: ${error}`);
+        }
+    }
+
+    async deleteAll(){
+        try {
+            return await this.knex.from(this.table).del();
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }
