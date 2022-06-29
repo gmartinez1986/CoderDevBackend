@@ -8,21 +8,53 @@ class MongoClass{
         this.collection = mongoose.model(collectionName, docSchema)
     }
 
-    async getAll(){
-        try{
-            const res = await this.collection.find({});
-            return res
-        }catch (error){
-            throw new Error("error: ", error)
-        }
-    }
-
     async create(obj){
         try{
             const newUser = await this.collection.create(obj);
             return newUser
         }catch (error){
-            throw new Error("error: ", error)
+            throw new Error(error)
+        }
+    }
+
+    async getAll(){
+        try{
+            const res = await this.collection.find({});
+            return res
+        }catch (error){
+            throw new Error(error)
+        }
+    }
+
+    async getById(id){
+        try{
+            const res = await this.collection.find({"_id" : id});
+            return res
+        }catch (error){
+            throw new Error(error)
+        }
+    }
+
+    async update(obj){
+        try{
+            const filter = { _id: obj.id };
+            const update = { name: obj.name, surname: obj.surname };
+
+            const res = await this.collection.updateOne(filter, update);
+            return res
+        }catch (error){
+            throw new Error(error)
+        }
+    }
+
+    async delete(id){
+        try{
+            const filter = { _id: id };
+
+            const res = await this.collection.deleteOne(filter);
+            return res
+        }catch (error){
+            throw new Error(error)
         }
     }
 }
