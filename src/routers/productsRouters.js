@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { productDao as api } from "../daos/index.js";
+import { productsDao as api } from "../daos/index.js";
 import Products from '../classes/products';
 
 const router = new Router()
@@ -37,18 +37,34 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const title = req.body.title;
+        const timestamp = req.body.timestamp;
+        const name = req.body.name;
+        const description = req.body.description;
+        const code = req.body.code;
+        const photo = req.body.photo;
         const price = req.body.price;
-        const thumbnail = req.body.thumbnail;
+        const stock = req.body.stock;
 
         const editProduct = new Products();
         editProduct.id = id;
-        editProduct.title = title;
+        editProduct.timestamp = timestamp;
+        editProduct.name = name;
+        editProduct.description = description;
+        editProduct.code = code;
+        editProduct.photo = photo;
         editProduct.price = price;
-        editProduct.thumbnail = thumbnail;
+        editProduct.stock = stock;
 
         const filter = { _id: editProduct.id };
-        const update = { title: editProduct.title, price: editProduct.price, thumbnail: editProduct.thumbnail };
+        const update = {
+            timestamp: editProduct.timestamp,
+            name: editProduct.name, 
+            description: editProduct.description,
+            code: editProduct.code,
+            photo: editProduct.photo,
+            price: editProduct.price,
+            stock: editProduct.stock,
+        };
 
         const apiRes = await api.update(filter, update);
         res.status(200).send(apiRes);

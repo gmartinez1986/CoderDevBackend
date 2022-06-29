@@ -1,8 +1,12 @@
 export default class Products {
 
-     constructor(title, price, thumbnail) {
-         this.title = title;
+     constructor(timestamp, name, description, code, photo,  price, stock) {
+         this.timestamp = timestamp;
+         this.name = name;
+         this.description = description;
+         this.code = code;
+         this.photo = photo;
          this.price = price;
-         this.thumbnail = thumbnail;
+         this.stock = stock;
      }
  }

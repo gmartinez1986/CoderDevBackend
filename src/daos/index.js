@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-let usersDao, productDao
+let usersDao, productsDao, cartsDao
 
 switch (process.env.DB_NAME) {
     case "mongoDB":
@@ -9,11 +9,14 @@ switch (process.env.DB_NAME) {
             usersDao = new MongoDBUsers()
         })
         import("./products/MongoDBProducts.js").then(({MongoDBProducts}) =>{
-            productDao = new MongoDBProducts()
+            productsDao = new MongoDBProducts()
+        })
+        import("./carts/MongoDBCarts.js").then(({MongoDBCarts}) =>{
+            cartsDao = new MongoDBCarts()
         })
         break;
     default:
         break;
 }
 
-export {usersDao, productDao}
+export {usersDao, productsDao, cartsDao}
