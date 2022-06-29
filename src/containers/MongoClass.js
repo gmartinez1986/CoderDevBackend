@@ -35,11 +35,8 @@ class MongoClass{
         }
     }
 
-    async update(obj){
+    async update(filter, update){
         try{
-            const filter = { _id: obj.id };
-            const update = { name: obj.name, surname: obj.surname };
-
             const res = await this.collection.updateOne(filter, update);
             return res
         }catch (error){

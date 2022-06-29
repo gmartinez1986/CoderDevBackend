@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { usersDao as api } from "../daos/index.js";
-import Users from '../classes/users';
+import { productDao as api } from "../daos/index.js";
+import Products from '../classes/products';
 
 const router = new Router()
 
 router.post("/", async (req, res) => {
     try {
-        const createUser = await api.create(req.body);
-        res.json(createUser)
+        const createProduct = await api.create(req.body);
+        res.json(createProduct)
     } catch (e) {
         res.status(413).send({ "Error": e.message });
         console.log(e)
@@ -16,8 +16,8 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const allUsers = await api.getAll();
-        res.json(allUsers)
+        const allProducts = await api.getAll();
+        res.json(allProducts)
     } catch (e) {
         res.status(413).send({ "Error": e.message });
     }
@@ -26,8 +26,8 @@ router.get("/", async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await api.getById(id);
-        res.status(200).send(user);
+        const product = await api.getById(id);
+        res.status(200).send(product);
     }
     catch (e) {
         res.status(413).send({ "Error": e.message });
@@ -37,16 +37,18 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const name = req.body.name;
-        const surname = req.body.surname;
+        const title = req.body.title;
+        const price = req.body.price;
+        const thumbnail = req.body.thumbnail;
 
-        const editUser = new Users();
-        editUser.id = id;
-        editUser.name = name;
-        editUser.surname = surname;
+        const editProduct = new Products();
+        editProduct.id = id;
+        editProduct.title = title;
+        editProduct.price = price;
+        editProduct.thumbnail = thumbnail;
 
-        const filter = { _id: editUser.id };
-        const update = { name: editUser.name, surname: editUser.surname };
+        const filter = { _id: editProduct.id };
+        const update = { title: editProduct.title, price: editProduct.price, thumbnail: editProduct.thumbnail };
 
         const apiRes = await api.update(filter, update);
         res.status(200).send(apiRes);
