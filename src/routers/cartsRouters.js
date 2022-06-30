@@ -99,13 +99,13 @@ router.delete('/:id/products/:idProduct', async (req, res) => {
             return;
         }
       
-        const { idProduct } = req.params;
+        const idProduct = req.body.idProduct;
+        const product = await apiProduct.getById(idProduct);
 
-        cart.products = cart.products.filter(function (x) {
-            return x.id !== parseInt(idProduct);
-        });
+        const filter = { _id: id };
+        const update =  { $pull: { products: product } };
 
-        await apiCart.update(cart);
+        await apiCart.update(filter, update);
         res.status(200).json(cart);  
     }
     catch (e) {
@@ -116,10 +116,10 @@ router.delete('/:id/products/:idProduct', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const cart = await apiCart.getById(parseInt(id));
+        const cart = await apiCart.getById(id);
 
         if (cart != null) {
-            await apiCart.delete(parseInt(id));
+            await apiCart.delete(id);
             res.status(200).send({ "mensaje": "El carrito se elimino correctamente." });
         } else {
             res.status(200).send({ "Error": "Carrito no encontrado" });
