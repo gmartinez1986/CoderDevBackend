@@ -47,7 +47,8 @@ router.get('/:id/products', async (req, res) => {
             res.status(200).send({ "Error": "Carrito no encontrado" });
             return;
         }
-        res.status(200).send({ "products": cart.products });
+
+        res.status(200).send(cart[0].products);
     }
     catch (e) {
         res.status(413).send({ "Error": e.message });
@@ -72,17 +73,11 @@ router.post('/:id/products', async (req, res) => {
             return;
         }
 
-        if(cart.products === undefined)
-        {
-            cart.products = [];
-        }
-
         const filter = { _id: id };
         const update = {$push: {products: product}};
         
-        cart.products.push(product);
-        await apiCart.update(filter, update);
-        res.status(200).json(cart);
+        const resApi = await apiCart.update(filter, update);
+        res.status(200).json(resApi);
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });
@@ -92,7 +87,7 @@ router.post('/:id/products', async (req, res) => {
 router.delete('/:id/products/:idProduct', async (req, res) => {
     try {
         const { id } = req.params;
-        const cart = await apiCart.getById(parseInt(id));
+        const cart = await apiCart.getById(id);
 
         if (cart === undefined) {          
             res.status(200).send({ "Error": "Carrito no encontrado" });
@@ -102,11 +97,16 @@ router.delete('/:id/products/:idProduct', async (req, res) => {
         const idProduct = req.body.idProduct;
         const product = await apiProduct.getById(idProduct);
 
-        const filter = { _id: id };
-        const update =  { $pull: { products: product } };
+        if (product === undefined) {          
+            res.status(200).send({ "Error": "Producto no encontrado" });
+            return;
+        }
 
-        await apiCart.update(filter, update);
-        res.status(200).json(cart);  
+        const filter = { _id: id };
+        const update = { $pull: { products: {_id: idProduct} } };
+
+        const resApi = await apiCart.update(filter, update);
+        res.status(200).json(resApi);  
     }
     catch (e) {
         res.status(413).send({ 'Error': e.message });
@@ -119,8 +119,8 @@ router.delete('/:id', async (req, res) => {
         const cart = await apiCart.getById(id);
 
         if (cart != null) {
-            await apiCart.delete(id);
-            res.status(200).send({ "mensaje": "El carrito se elimino correctamente." });
+            const resApi = await apiCart.delete(id);
+            res.status(200).send(resApi);
         } else {
             res.status(200).send({ "Error": "Carrito no encontrado" });
         }
