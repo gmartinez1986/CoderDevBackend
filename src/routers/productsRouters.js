@@ -6,8 +6,25 @@ const router = new Router()
 
 router.post("/", async (req, res) => {
     try {
-        const createProduct = await api.create(req.body);
-        res.json(createProduct)
+        const timestamp = Date.now();
+        const name = req.body.name;
+        const description = req.body.description;
+        const code = req.body.code;
+        const photo = req.body.photo;
+        const price = req.body.price;
+        const stock = req.body.stock;
+
+        const newProduct = new Products();
+        newProduct.timestamp = timestamp;
+        newProduct.name = name;
+        newProduct.description = description;
+        newProduct.code = code;
+        newProduct.photo = photo;
+        newProduct.price = price;
+        newProduct.stock = stock;
+
+        const createdProduct = await api.create(newProduct);
+        res.json(createdProduct)
     } catch (e) {
         res.status(413).send({ "Error": e.message });
         console.log(e)
